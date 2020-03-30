@@ -7,17 +7,18 @@ var port = /*process.env.PORT ||*/ 1337;
  * */
 var playerConnections = [];
 
-const socket = require('socket.io')(port);
+const socket = require("socket.io")(port);
 
 console.log("Port Number:", port);
 console.log("Server Started");
 
 socket.on("connection", (soc) => {
-    console.log("Connection Made With Client")
+    console.log("Connection Made With Client");
 
     playerConnections.push(soc);
 
-    soc.on("I am connecting to you", () => {
-        console.log("You are connected")
+    soc.on("Sending My Position", (data) => {
+        console.log(data);
+        playerConnections[0].emit("PlayerMove", data);
     })
 })
