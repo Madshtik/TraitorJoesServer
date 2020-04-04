@@ -11,7 +11,7 @@ console.log("Server Started");
 /**
  * @type {Player[]} array to store new players
  * */
-playersArr = [];
+var playersArr = [];
 
 class Player
 {
@@ -112,7 +112,7 @@ socket.on("connection", (soc) =>
 {
     var newPlayer = new Player(currentId++, soc)
 
-    waitingForRoom = undefined;
+    var waitingForRoom = undefined;
     playersArr.push(newPlayer);
 
     soc.on("findRoom", () => //matchmaking
