@@ -1,6 +1,6 @@
 'use strict';
 
-var port = /*process.env.PORT ||*/ 1337;
+var port = process.env.PORT || 1337;
 var currentId = 0;
 
 const socket = require("socket.io")(port);
