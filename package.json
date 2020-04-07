@@ -1,0 +1,15 @@
+{
+  "name": "server.js",
+  "version": "0.0.0",
+  "description": "server.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "socket.io": "2.3.0"
+  }
+}
