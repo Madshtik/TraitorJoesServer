@@ -47,16 +47,23 @@ class Room
      */
     constructor(players)
     {
+        for (var i = 0; i < players.length; i++)
+        {
+            players[i].socket.emit("matchFound", { "id": players[i].id });
+            players[i].id = id;
+        }
+
         //---------- Player Overlord
         this.overlord = players[0];
+
         players[0].socket.on("transformUpdate", (data) =>
         {
             players[1].socket.emit("transformUpdate", data);
         });
 
-        players[0].socket.on("shoot", (data) => //sender
+        players[0].socket.on("shoot", (data) =>
         {
-            this.joe.socket.emit("shoot", data); //sendee
+            players[1].socket.emit("shoot", data);
         });
 
         players[0].socket.on("giveUp", (data) =>
@@ -66,48 +73,70 @@ class Room
 
         //---------- Player Joe
         this.joe = players[1];
+
         players[1].socket.on("transformUpdate", (data) =>
         {
-            players[0].socket.emit("transformUpdate", data);
+            players[0].socket.emit("transformUpdate", data);            
         });
 
         players[1].socket.on("pickUp", (data) => //sender
         {
-            this.overlord.socket.emit("pickUp", data); //sendee
+            players[0].socket.emit("pickUp", data); //receiver
         });
 
         players[1].socket.on("giveUp", (data) =>
         {
             players[0].socket.emit("giveUp", data);
         });
-
-        //function <= attempt this on everything above to make it look cleaner
     }
 }
 
-/**
- * @type {Player[]} array to store new players
- * */
-var playersArr = [];
 var currentId = 0;
 
 socket.on("connection", (soc) =>
 {
-    var newPlayer = new Player(currentId++, soc)
     var waitingForRoom = undefined;
-    playersArr.push(newPlayer);
 
-    soc.on("findRoom", () => //matchmaking
+    var newPlayer = new Player(currentId++, soc);
+
+    soc.on("findRoom", (playerData) => //matchmaking
     {
-        if (waitingForRoom === undefined) {
-            waitingForRoom = newPlayer;
-        }
-        else
+        if (waitingForRoom === undefined) //creates room
         {
-            var newRoom = new Room([newPlayer, waitingForRoom])
+            waitingForRoom = newPlayer;
+
+            console.log("Waiting for player 2");
+        }
+        else if (waitingForRoom !== newPlayer) //finds room created by P1
+        {
+            var newRoom = new Room([newPlayer, waitingForRoom]);
+
+            console.log("Player 2 has arrived");
+
+            for (var i = 0; i < playersArr.length; i++)
+            {
+                playersArr[i].socket.emit("matchStarted", newRoom);
+            }
+
             waitingForRoom = undefined;
         }
     });
 
-    console.log("I am the client");
+    soc.on("matchInProgress", (matchData) =>
+    {
+        playersArr[0].socket.on("transformUpdate", (data) =>
+        {
+            playersArr[1].socket.emit("transformUpdate", data);
+        });
+
+        playersArr[0].socket.on("shoot", (data) =>
+        {
+            playersArr[1].socket.emit("shoot", data);
+        });
+
+        playersArr[0].socket.on("giveUp", (data) =>
+        {
+            playersArr[1].socket.emit("giveUp", data);
+        });
+    });
 });
