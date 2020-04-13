@@ -1,6 +1,6 @@
 'use strict';
 
-var port = /*process.env.PORT ||*/ 1337;
+var port = process.env.PORT;
 
 const socket = require("socket.io")(port);
 
@@ -99,7 +99,9 @@ socket.on("connection", (soc) =>
 
     var newPlayer = new Player(currentId++, soc);
 
-    soc.on("findRoom", (playerData) => //matchmaking
+    console.log("Player 1 has arrived");
+
+    soc.on("findRoom", () => //matchmaking
     {
         if (waitingForRoom === undefined) //creates room
         {
