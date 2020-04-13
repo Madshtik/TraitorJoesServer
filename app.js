@@ -88,6 +88,20 @@ class Room
         {
             players[0].socket.emit("giveUp", data);
         });
+
+        for (var i = 0; i < players.length; i++)
+        {
+            players[i].socket.on("disconnect", (socket) =>
+            {
+                if (players[0].socket === socket) {
+                    players[1].emit("Yoo won, yay");
+                }
+                else
+                {
+                    players[0].emit("Yoo won, yay");
+                }
+            });
+        }
     }
 }
 
@@ -99,7 +113,7 @@ socket.on("connection", (soc) =>
 
     var newPlayer = new Player(currentId++, soc);
 
-    console.log("Player 1 has arrived");
+    console.log(newPlayer.socket.handshake.address);
 
     soc.on("findRoom", () => //matchmaking
     {
