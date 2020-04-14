@@ -93,7 +93,8 @@ class Room
         {
             players[i].socket.on("disconnect", (socket) =>
             {
-                if (players[0].socket === socket) {
+                if (players[0].socket === socket)
+                {
                     players[1].emit("Yoo won, yay");
                 }
                 else
@@ -124,8 +125,8 @@ socket.on("connection", (soc) =>
         }
         else if (waitingForRoom !== newPlayer) //finds room created by P1
         {
-            var newRoom = new Room([newPlayer, waitingForRoom]);
-
+            new Room([newPlayer, waitingForRoom]);
+            
             console.log("Player 2 has arrived");
 
             waitingForRoom = undefined;
