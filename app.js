@@ -49,8 +49,8 @@ class Room
     {
         for (var i = 0; i < players.length; i++)
         {
-            players[i].socket.emit("matchFound", { "id": players[i].id });
-            players[i].id = id;
+            players[i].socket.emit("matchFound", { "id": i });
+            players[i].id = i;
         }
 
         //---------- Player Overlord
@@ -128,30 +128,7 @@ socket.on("connection", (soc) =>
 
             console.log("Player 2 has arrived");
 
-            for (var i = 0; i < playersArr.length; i++)
-            {
-                playersArr[i].socket.emit("matchStarted", newRoom);
-            }
-
             waitingForRoom = undefined;
         }
-    });
-
-    soc.on("matchInProgress", () =>
-    {
-        playersArr[0].socket.on("transformUpdate", (data) =>
-        {
-            playersArr[1].socket.emit("transformUpdate", data);
-        });
-
-        playersArr[0].socket.on("shoot", (data) =>
-        {
-            playersArr[1].socket.emit("shoot", data);
-        });
-
-        playersArr[0].socket.on("giveUp", (data) =>
-        {
-            playersArr[1].socket.emit("giveUp", data);
-        });
     });
 });
