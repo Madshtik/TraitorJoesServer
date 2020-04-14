@@ -106,11 +106,10 @@ class Room
 }
 
 var currentId = 0;
+var waitingForRoom = undefined;
 
 socket.on("connection", (soc) =>
 {
-    var waitingForRoom = undefined;
-
     var newPlayer = new Player(currentId++, soc);
 
     console.log(newPlayer.socket.handshake.address);
@@ -138,7 +137,7 @@ socket.on("connection", (soc) =>
         }
     });
 
-    soc.on("matchInProgress", (matchData) =>
+    soc.on("matchInProgress", () =>
     {
         playersArr[0].socket.on("transformUpdate", (data) =>
         {
