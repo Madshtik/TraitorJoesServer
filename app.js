@@ -133,8 +133,8 @@ socket.on("connection", (soc) =>
             
             console.log("Player 2 has arrived");
 
-            newPlayer.emit("startMatch");
-            waitingForRoom.emit("startMatch");
+            newPlayer.socket.emit("startMatch");
+            waitingForRoom.socket.emit("startMatch");
 
             waitingForRoom = undefined;
         }
