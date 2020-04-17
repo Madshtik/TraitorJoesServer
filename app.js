@@ -133,10 +133,10 @@ socket.on("connection", (soc) =>
             
             console.log("Player 2 has arrived");
 
-            //for (var i = 0; i < length; i++)
-            //{
-            //    room.players[i].emit("startMatch");
-            //}
+            for (var i = 0; i < players.length; i++)
+            {
+                room.players[i].emit("startMatch");
+            }
 
             waitingForRoom = undefined;
         }
