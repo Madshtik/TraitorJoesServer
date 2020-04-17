@@ -115,7 +115,7 @@ socket.on("connection", (soc) =>
 
     console.log(newPlayer.socket.handshake.address);
 
-    soc.on("findRoom", () => //matchmaking
+    soc.on("createRoom", () => //Hosting
     {
         if (waitingForRoom === undefined) //creates room
         {
@@ -123,13 +123,22 @@ socket.on("connection", (soc) =>
 
             console.log("Waiting for player 2");
         }
-        else if (waitingForRoom !== newPlayer) //finds room created by P1
+    });
+
+    soc.on("findRoom", () => //Joining
+    {
+        if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            new Room([newPlayer, waitingForRoom]);
+            var room = new Room([newPlayer, waitingForRoom]);
             
             console.log("Player 2 has arrived");
 
+            for (var i = 0; i < length; i++)
+            {
+                room.players[i].emit("startMatch");
+            }
+
             waitingForRoom = undefined;
         }
-    });
+    })
 });
