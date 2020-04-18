@@ -9,7 +9,7 @@ console.log("Server Started");
 
 class Player
 {
-    id;
+    //id;
     //position;
     //rotation;
 
@@ -59,9 +59,9 @@ class Room
         //---------- Player Joe
         this.joe = this.playersArr[1];
 
-        this.overlord.socket.on("transformUpdate", (data) =>
+        this.overlord.socket.on("oLTransformUpdate", (data) => //from sender
         {
-            this.joe.socket.emit("transformUpdate", data);
+            this.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
         });
 
         this.overlord.socket.on("shoot", (data) =>
@@ -74,15 +74,14 @@ class Room
             this.joe.socket.emit("giveUp", data);
         });
 
-
-        this.joe.socket.on("transformUpdate", (data) =>
+        this.joe.socket.on("joeTransformUpdate", (data) =>
         {
-            this.overlord.socket.emit("transformUpdate", data);            
+            this.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
         });
 
-        this.joe.socket.on("pickUp", (data) => //sender
+        this.joe.socket.on("pickUp", (data) =>
         {
-            this.overlord.socket.emit("pickUp", data); //receiver
+            this.overlord.socket.emit("pickUp", data);
         });
 
         this.joe.socket.on("giveUp", (data) =>
@@ -133,16 +132,9 @@ socket.on("connection", (soc) =>
             
             console.log("Player 2 has arrived");
 
-            var data;
-            var dataJSON;
-
             for (var i = 0; i < room.playersArr.length; i++)
             {
-                data = '{ "id": i }';
-                dataJSON = JSON.stringify(data);
-
-                room.playersArr[i].socket.emit("startMatch", { "id": dataJSON });
-                room.playersArr[i].socket.emit("matchFound");
+                room.playersArr[i].socket.emit("startMatch");
                 room.playersArr[i].id = i;
 
                 console.log(room.playersArr[i].id);
