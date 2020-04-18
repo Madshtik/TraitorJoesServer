@@ -131,7 +131,7 @@ socket.on("connection", (soc) =>
         {
             var room = new Room([newPlayer, waitingForRoom]);
 
-            console.log(room.players.length);
+            console.log(room.players[0]);
 
             for (var i = 0; i < room.players.length; i++)
             {
