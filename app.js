@@ -142,7 +142,7 @@ socket.on("connection", (soc) =>
             
             console.log("Player 2 has arrived");
 
-            for (var i = 0; i < room.players.length; i++)
+            for (var i = 0; i < room.playersArr.length; i++)
             {
                 room.players[i].socket.emit("startMatch");
             }
