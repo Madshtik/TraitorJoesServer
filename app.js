@@ -62,10 +62,10 @@ class Room
         }
 
         //---------- Player Overlord
-        this.overlord = this.overlord;
+        this.overlord = players[0];
 
         //---------- Player Joe
-        this.joe = this.joe;
+        this.joe = players[1];
 
         this.overlord.socket.on("transformUpdate", (data) =>
         {
