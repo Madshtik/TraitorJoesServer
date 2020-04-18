@@ -133,11 +133,18 @@ socket.on("connection", (soc) =>
             
             console.log("Player 2 has arrived");
 
+            var data;
+            var dataJSON;
+
             for (var i = 0; i < room.playersArr.length; i++)
             {
-                room.playersArr[i].socket.emit("startMatch");
-                room.playersArr[i].socket.emit("matchFound", { "id": i });
+                data = '{ "id": i }';
+                dataJSON = JSON.stringify(data);
+
+                room.playersArr[i].socket.emit("startMatch", { "id": dataJSON });
+                room.playersArr[i].socket.emit("matchFound");
                 room.playersArr[i].id = i;
+
                 console.log(room.playersArr[i].id);
             }
             waitingForRoom = undefined;
