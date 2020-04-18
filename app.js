@@ -130,8 +130,8 @@ socket.on("connection", (soc) =>
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
             var room = new Room([newPlayer, waitingForRoom]);
-            
-            console.log("Player 2 has arrived");
+
+            console.log(room.players.length);
 
             for (var i = 0; i < room.players.length; i++)
             {
