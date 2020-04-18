@@ -65,51 +65,50 @@ class Room
 
         //---------- Player Overlord
         this.overlord = this.players[0];
-
-        this.players[0].socket.on("transformUpdate", (data) =>
-        {
-            this.players[1].socket.emit("transformUpdate", data);
-        });
-
-        this.players[0].socket.on("shoot", (data) =>
-        {
-            this.players[1].socket.emit("shoot", data);
-        });
-
-        this.players[0].socket.on("giveUp", (data) =>
-        {
-            this.players[1].socket.emit("giveUp", data);
-        });
-
         //---------- Player Joe
         this.joe = players[1];
 
-        this.players[1].socket.on("transformUpdate", (data) =>
+        this.overlord.socket.on("transformUpdate", (data) =>
         {
-            this.players[0].socket.emit("transformUpdate", data);            
+            this.joe.socket.emit("transformUpdate", data);
         });
 
-        this.players[1].socket.on("pickUp", (data) => //sender
+        this.overlord.socket.on("shoot", (data) =>
         {
-            this.players[0].socket.emit("pickUp", data); //receiver
+            this.joe.socket.emit("shoot", data);
         });
 
-        this.players[1].socket.on("giveUp", (data) =>
+        this.overlord.socket.on("giveUp", (data) =>
         {
-            this.players[0].socket.emit("giveUp", data);
+            this.joe.socket.emit("giveUp", data);
+        });
+
+        this.joe.socket.on("transformUpdate", (data) =>
+        {
+            this.overlord.socket.emit("transformUpdate", data);            
+        });
+
+        this.joe.socket.on("pickUp", (data) => //sender
+        {
+            this.overlord.socket.emit("pickUp", data); //receiver
+        });
+
+        this.joe.socket.on("giveUp", (data) =>
+        {
+            this.overlord.socket.emit("giveUp", data);
         });
 
         for (var i = 0; i < this.players.length; i++)
         {
             this.players[i].socket.on("disconnect", (socket) =>
             {
-                if (this.players[0].socket === socket)
+                if (this.overlord.socket === socket)
                 {
-                    this.players[1].emit("Yoo won, yay");
+                    this.joe.emit("Yoo won, yay");
                 }
                 else
                 {
-                    this.players[0].emit("Yoo won, yay");
+                    this.overlord.emit("Yoo won, yay");
                 }
             });
         }
@@ -141,7 +140,8 @@ socket.on("connection", (soc) =>
         {
             var room = new Room(waitingForRoom, newPlayer);
 
-            console.log(room.overlord);
+            console.log(waitingForRoom);
+            console.log(newPlayer);
 
             for (var i = 0; i < room.players.length; i++)
             {
