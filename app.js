@@ -104,11 +104,11 @@ class Room
             {
                 if (this.overlord.socket === socket)
                 {
-                    this.joe.emit("Yoo won, yay");
+                    this.joe.emit("winMsg");
                 }
                 else
                 {
-                    this.overlord.emit("Yoo won, yay");
+                    this.overlord.emit("winMsg");
                 }
             });
         }
