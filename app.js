@@ -10,8 +10,8 @@ console.log("Server Started");
 class Player
 {
     id;
-    position;
-    rotation;
+    //position;
+    //rotation;
 
     /**
      * @type {SocketIO.Socket}  this is the socket given when a player joins
@@ -52,12 +52,6 @@ class Room
     constructor(players)
     {
         this.playersArr = players;
-
-        //for (var i = 0; i < this.playersArr.length; i++)
-        //{
-        //    this.playersArr[i].socket.emit("matchFound", { "id": i });
-        //    this.playersArr[i].id = i;
-        //}
 
         //---------- Player Overlord
         this.overlord = this.playersArr[0];
@@ -120,6 +114,8 @@ socket.on("connection", (soc) =>
     var newPlayer = new Player(soc);
 
     console.log(newPlayer.socket.handshake.address);
+
+    console.log(newPlayer.id);
 
     soc.on("createRoom", () => //Hosting
     {
