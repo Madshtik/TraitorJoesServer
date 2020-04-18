@@ -53,17 +53,17 @@ class Room
     {
         this.playersArr = players;
 
-        for (var i = 0; i < players.length; i++)
+        for (var i = 0; i < this.playersArr.length; i++)
         {
-            playersArr[i].socket.emit("matchFound", { "id": i });
-            playersArr[i].id = i;
+            this.playersArr[i].socket.emit("matchFound", { "id": i });
+            this.playersArr[i].id = i;
         }
 
         //---------- Player Overlord
-        this.overlord = playersArr[0];
+        this.overlord = this.playersArr[0];
 
         //---------- Player Joe
-        this.joe = playersArr[1];
+        this.joe = this.playersArr[1];
 
         this.overlord.socket.on("transformUpdate", (data) =>
         {
@@ -96,9 +96,9 @@ class Room
             this.overlord.socket.emit("giveUp", data);
         });
 
-        for (var i = 0; i < players.length; i++)
+        for (var i = 0; i < this.playersArr.length; i++)
         {
-            playersArr[i].socket.on("disconnect", (socket) =>
+            this.playersArr[i].socket.on("disconnect", (socket) =>
             {
                 if (this.overlord.socket === socket)
                 {
