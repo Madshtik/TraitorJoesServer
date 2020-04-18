@@ -10,7 +10,8 @@ console.log("Server Started");
 /**
  * @type {SocketIO.Socket[]} js is a bitch
  * */
-var playersArr;
+var playersArr=[];
+
 class Player
 {
     id;
