@@ -53,11 +53,11 @@ class Room
     {
         this.playersArr = players;
 
-        for (var i = 0; i < this.playersArr.length; i++)
-        {
-            this.playersArr[i].socket.emit("matchFound", { "id": i });
-            this.playersArr[i].id = i;
-        }
+        //for (var i = 0; i < this.playersArr.length; i++)
+        //{
+        //    this.playersArr[i].socket.emit("matchFound", { "id": i });
+        //    this.playersArr[i].id = i;
+        //}
 
         //---------- Player Overlord
         this.overlord = this.playersArr[0];
@@ -142,6 +142,8 @@ socket.on("connection", (soc) =>
             for (var i = 0; i < room.playersArr.length; i++)
             {
                 room.playersArr[i].socket.emit("startMatch");
+                room.playersArr[i].socket.emit("matchFound", { "id": i });
+                room.playersArr[i].id = i;
             }
 
             waitingForRoom = undefined;
