@@ -19,12 +19,10 @@ class Player
     socket;
 
     /**
-     * @param {number} playerId this is the player ID given when a player joins
      * @param {SocketIO.Socket} playerSocket this is the socket when a player joins
      */
-    constructor(playerId, playerSocket)
+    constructor(playerSocket)
     {
-        this.id = playerId;
         this.socket = playerSocket;
     }
 }
@@ -57,15 +55,15 @@ class Room
 
         for (var i = 0; i < players.length; i++)
         {
-            players[i].socket.emit("matchFound", { "id": i });
-            players[i].id = i;
+            playersArr[i].socket.emit("matchFound", { "id": i });
+            playersArr[i].id = i;
         }
 
         //---------- Player Overlord
-        this.overlord = players[0];
+        this.overlord = playersArr[0];
 
         //---------- Player Joe
-        this.joe = players[1];
+        this.joe = playersArr[1];
 
         this.overlord.socket.on("transformUpdate", (data) =>
         {
@@ -100,7 +98,7 @@ class Room
 
         for (var i = 0; i < players.length; i++)
         {
-            players[i].socket.on("disconnect", (socket) =>
+            playersArr[i].socket.on("disconnect", (socket) =>
             {
                 if (this.overlord.socket === socket)
                 {
@@ -115,12 +113,11 @@ class Room
     }
 }
 
-var currentId = 0;
 var waitingForRoom = undefined;
 
 socket.on("connection", (soc) =>
 {
-    var newPlayer = new Player(currentId++, soc);
+    var newPlayer = new Player(soc);
 
     console.log(newPlayer.socket.handshake.address);
 
