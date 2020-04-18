@@ -41,8 +41,7 @@ class Room
      */
     joe;
 
-    /**
-     * 
+    /** 
      * @param {Player[]} players this is an array of players
      */
     constructor(players)
@@ -131,7 +130,7 @@ socket.on("connection", (soc) =>
         {
             var room = new Room([newPlayer, waitingForRoom]);
 
-            console.log(room.players[0]);
+            console.log(room.overlord);
 
             for (var i = 0; i < room.players.length; i++)
             {
