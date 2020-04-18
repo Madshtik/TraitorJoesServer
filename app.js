@@ -144,7 +144,7 @@ socket.on("connection", (soc) =>
 
             for (var i = 0; i < room.playersArr.length; i++)
             {
-                room.players[i].socket.emit("startMatch");
+                room.playersArr[i].socket.emit("startMatch");
             }
 
             waitingForRoom = undefined;
