@@ -139,7 +139,7 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            var room = new Room([newPlayer, waitingForRoom]);
+            var room = new Room(waitingForRoom, newPlayer);
 
             console.log(room.overlord);
 
