@@ -138,9 +138,8 @@ socket.on("connection", (soc) =>
                 room.playersArr[i].socket.emit("startMatch");
                 room.playersArr[i].socket.emit("matchFound", { "id": i });
                 room.playersArr[i].id = i;
+                console.log(room.playersArr[i].id);
             }
-
-            console.log(newPlayer.id);
             waitingForRoom = undefined;
         }
     })
