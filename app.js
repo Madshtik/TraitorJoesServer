@@ -136,7 +136,7 @@ socket.on("connection", (soc) =>
             for (var i = 0; i < room.playersArr.length; i++)
             {
                 room.playersArr[i].socket.emit("startMatch");
-                room.playersArr[i].socket.emit("matchFound");
+                room.playersArr[i].socket.emit("matchFound", { "id": i });
                 room.playersArr[i].id = i;
                 console.log(room.playersArr[i].id);
             }
