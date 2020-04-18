@@ -41,64 +41,75 @@ class Room
      */
     joe;
 
-    /** 
-     * @param {Player[]} players this is an array of players
+    /**
+     * 
+     * @type {Player[]} players array
      */
-    constructor(players)
+    players;
+
+    /** 
+     *  
+     * @param {Player} p1 this is player 1
+     * @param {Player} p2 this is player 2
+     */
+    constructor(p1, p2)
     {
-        for (var i = 0; i < players.length; i++)
+        this.players.push(p1);
+        this.players.push(p2);
+
+        for (var i = 0; i < this.players.length; i++)
         {
-            players[i].socket.emit("matchFound", { "id": i });
-            players[i].id = i;
+            this.players[i].socket.emit("matchFound", { "id": i });
+            this.players[i].id = i;
         }
 
         //---------- Player Overlord
-        this.overlord = players[0];
+        this.overlord = this.players[0];
 
-        players[0].socket.on("transformUpdate", (data) =>
+        this.players[0].socket.on("transformUpdate", (data) =>
         {
-            players[1].socket.emit("transformUpdate", data);
+            this.players[1].socket.emit("transformUpdate", data);
         });
 
-        players[0].socket.on("shoot", (data) =>
+        this.players[0].socket.on("shoot", (data) =>
         {
-            players[1].socket.emit("shoot", data);
+            this.players[1].socket.emit("shoot", data);
         });
 
-        players[0].socket.on("giveUp", (data) =>
+        this.players[0].socket.on("giveUp", (data) =>
         {
-            players[1].socket.emit("giveUp", data);
+            this.players[1].socket.emit("giveUp", data);
         });
 
         //---------- Player Joe
         this.joe = players[1];
 
-        players[1].socket.on("transformUpdate", (data) =>
+        this.players[1].socket.on("transformUpdate", (data) =>
         {
-            players[0].socket.emit("transformUpdate", data);            
+            this.players[0].socket.emit("transformUpdate", data);            
         });
 
-        players[1].socket.on("pickUp", (data) => //sender
+        this.players[1].socket.on("pickUp", (data) => //sender
         {
-            players[0].socket.emit("pickUp", data); //receiver
+            this.players[0].socket.emit("pickUp", data); //receiver
         });
 
-        players[1].socket.on("giveUp", (data) =>
+        this.players[1].socket.on("giveUp", (data) =>
         {
-            players[0].socket.emit("giveUp", data);
+            this.players[0].socket.emit("giveUp", data);
         });
 
-        for (var i = 0; i < players.length; i++)
+        for (var i = 0; i < this.players.length; i++)
         {
-            players[i].socket.on("disconnect", (socket) =>
+            this.players[i].socket.on("disconnect", (socket) =>
             {
-                if (players[0].socket === socket)
+                if (this.players[0].socket === socket)
                 {
-                    players[1].emit("Yoo won, yay");
+                    this.players[1].emit("Yoo won, yay");
                 }
                 else
                 {
-                    players[0].emit("Yoo won, yay");
+                    this.players[0].emit("Yoo won, yay");
                 }
             });
         }
