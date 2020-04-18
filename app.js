@@ -138,10 +138,10 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            var room = new Room(waitingForRoom, newPlayer);
-
             console.log(waitingForRoom);
             console.log(newPlayer);
+            var room = new Room(waitingForRoom, newPlayer);
+
 
             for (var i = 0; i < room.players.length; i++)
             {
