@@ -115,8 +115,6 @@ socket.on("connection", (soc) =>
 
     console.log(newPlayer.socket.handshake.address);
 
-    console.log(newPlayer.id);
-
     soc.on("createRoom", () => //Hosting
     {
         if (waitingForRoom === undefined) //creates room
@@ -142,6 +140,7 @@ socket.on("connection", (soc) =>
                 room.playersArr[i].id = i;
             }
 
+            console.log(newPlayer.id);
             waitingForRoom = undefined;
         }
     })
