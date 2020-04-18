@@ -7,6 +7,10 @@ const socket = require("socket.io")(port);
 console.log("Port Number:", port);
 console.log("Server Started");
 
+/**
+ * @type {Player[]} js is a bitch
+ * */
+var playersARR;
 class Player
 {
     id;
@@ -54,64 +58,64 @@ class Room
      */
     constructor(p1, p2)
     {
-        this.players.push(p1);
-        this.players.push(p2);
+        playersARR.push(p1);
+        playersARR.push(p2);
 
-        for (var i = 0; i < this.players.length; i++)
-        {
-            this.players[i].socket.emit("matchFound", { "id": i });
-            this.players[i].id = i;
-        }
+        //for (var i = 0; i < this.players.length; i++)
+        //{
+        //    this.players[i].socket.emit("matchFound", { "id": i });
+        //    this.players[i].id = i;
+        //}
 
-        //---------- Player Overlord
-        this.overlord = this.players[0];
-        //---------- Player Joe
-        this.joe = players[1];
+        ////---------- Player Overlord
+        //this.overlord = this.players[0];
+        ////---------- Player Joe
+        //this.joe = players[1];
 
-        this.overlord.socket.on("transformUpdate", (data) =>
-        {
-            this.joe.socket.emit("transformUpdate", data);
-        });
+        //this.overlord.socket.on("transformUpdate", (data) =>
+        //{
+        //    this.joe.socket.emit("transformUpdate", data);
+        //});
 
-        this.overlord.socket.on("shoot", (data) =>
-        {
-            this.joe.socket.emit("shoot", data);
-        });
+        //this.overlord.socket.on("shoot", (data) =>
+        //{
+        //    this.joe.socket.emit("shoot", data);
+        //});
 
-        this.overlord.socket.on("giveUp", (data) =>
-        {
-            this.joe.socket.emit("giveUp", data);
-        });
+        //this.overlord.socket.on("giveUp", (data) =>
+        //{
+        //    this.joe.socket.emit("giveUp", data);
+        //});
 
-        this.joe.socket.on("transformUpdate", (data) =>
-        {
-            this.overlord.socket.emit("transformUpdate", data);            
-        });
+        //this.joe.socket.on("transformUpdate", (data) =>
+        //{
+        //    this.overlord.socket.emit("transformUpdate", data);            
+        //});
 
-        this.joe.socket.on("pickUp", (data) => //sender
-        {
-            this.overlord.socket.emit("pickUp", data); //receiver
-        });
+        //this.joe.socket.on("pickUp", (data) => //sender
+        //{
+        //    this.overlord.socket.emit("pickUp", data); //receiver
+        //});
 
-        this.joe.socket.on("giveUp", (data) =>
-        {
-            this.overlord.socket.emit("giveUp", data);
-        });
+        //this.joe.socket.on("giveUp", (data) =>
+        //{
+        //    this.overlord.socket.emit("giveUp", data);
+        //});
 
-        for (var i = 0; i < this.players.length; i++)
-        {
-            this.players[i].socket.on("disconnect", (socket) =>
-            {
-                if (this.overlord.socket === socket)
-                {
-                    this.joe.emit("Yoo won, yay");
-                }
-                else
-                {
-                    this.overlord.emit("Yoo won, yay");
-                }
-            });
-        }
+        //for (var i = 0; i < this.players.length; i++)
+        //{
+        //    this.players[i].socket.on("disconnect", (socket) =>
+        //    {
+        //        if (this.overlord.socket === socket)
+        //        {
+        //            this.joe.emit("Yoo won, yay");
+        //        }
+        //        else
+        //        {
+        //            this.overlord.emit("Yoo won, yay");
+        //        }
+        //    });
+        //}
     }
 }
 
@@ -138,14 +142,13 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            console.log(waitingForRoom);
-            console.log(newPlayer);
             var room = new Room(waitingForRoom, newPlayer);
 
+            //console.log(room.overlord);
 
-            for (var i = 0; i < room.players.length; i++)
+            for (var i = 0; i < playersARR.length; i++)
             {
-                room.players[i].socket.emit("startMatch");
+                playersARR[i].socket.emit("startMatch");
             }
 
             waitingForRoom = undefined;
