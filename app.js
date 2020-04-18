@@ -8,9 +8,9 @@ console.log("Port Number:", port);
 console.log("Server Started");
 
 /**
- * @type {Player[]} js is a bitch
+ * @type {SocketIO.Socket[]} js is a bitch
  * */
-var playersARR;
+var playersArr;
 class Player
 {
     id;
@@ -53,13 +53,13 @@ class Room
 
     /** 
      *  
-     * @param {Player} p1 this is player 1
-     * @param {Player} p2 this is player 2
+     * @param {SocketIO.Socket} p1 this is player 1
+     * @param {SocketIO.Socket} p2 this is player 2
      */
     constructor(p1, p2)
     {
-        playersARR.push(p1);
-        playersARR.push(p2);
+        playersArr.push(p1);
+        playersArr.push(p2);
 
         //for (var i = 0; i < this.players.length; i++)
         //{
@@ -142,13 +142,13 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            var room = new Room(waitingForRoom, newPlayer);
+            var room = new Room(waitingForRoom.playerSocket, newPlayer.playerSocket);
 
             //console.log(room.overlord);
 
-            for (var i = 0; i < playersARR.length; i++)
+            for (var i = 0; i < playersArr.length; i++)
             {
-                playersARR[i].socket.emit("startMatch");
+                playersArr[i].socket.emit("startMatch");
             }
 
             waitingForRoom = undefined;
