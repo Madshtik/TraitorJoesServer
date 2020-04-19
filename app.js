@@ -63,7 +63,7 @@ var roomArr = [];
 socket.on("connection", (soc) =>
 {
     var newPlayer = new Player(soc);
-    pArr.push(newPlayer);
+    //pArr.push(newPlayer);
 
     console.log(newPlayer.socket.handshake.address);
 
