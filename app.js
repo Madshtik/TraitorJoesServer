@@ -120,16 +120,14 @@ socket.on("connection", (soc) =>
             //---------- Player Joe
             room.joe = room.playersArr[1];
 
-
-            pArr[0].socket.on("transformUpdate", (data) => //from sender
+            if (pArr[1] === newPlayer)
             {
-                var player = {
-                    positionX: data.GetField("Player Position").GetField("x position")
-                };
-                pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-                console.log(player);
-            });
-
+                pArr[0].socket.on("transformUpdate", (data) => //from sender
+                {
+                    pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
+                    console.log("Hello");
+                });
+            }
             room.overlord.socket.on("shoot", (data) => {
                 room.joe.socket.emit("shoot", data);
             });
@@ -138,11 +136,12 @@ socket.on("connection", (soc) =>
                 room.joe.socket.emit("giveUp", data);
             });
 
-            pArr[1].socket.on("transformUpdate", (data) => {
-                pArr[0].socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
-                console.log("Hello");
-            });
-
+            if (pArr[0] === newPlayer) {
+                pArr[1].socket.on("transformUpdate", (data) => {
+                    pArr[0].socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
+                    console.log("Hello");
+                });
+            }
             room.joe.socket.on("pickUp", (data) => {
                 room.overlord.socket.emit("pickUp", data);
             });
