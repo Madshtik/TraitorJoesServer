@@ -52,63 +52,11 @@ class Room
     constructor(players)
     {
         this.playersArr = players;
-
-        //---------- Player Overlord
-        this.overlord = this.playersArr[0];
-
-        //---------- Player Joe
-        this.joe = this.playersArr[1];
-
-        this.overlord.socket.on("oLTransformUpdate", (data) => //from sender
-        {
-            this.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
-            console.log("Hello");
-        });
-
-        this.overlord.socket.on("shoot", (data) =>
-        {
-            this.joe.socket.emit("shoot", data);
-        });
-
-        this.overlord.socket.on("giveUp", (data) =>
-        {
-            this.joe.socket.emit("giveUp", data);
-        });
-
-        this.joe.socket.on("joeTransformUpdate", (data) =>
-        {
-            this.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
-            console.log("Hello");
-        });
-
-        this.joe.socket.on("pickUp", (data) =>
-        {
-            this.overlord.socket.emit("pickUp", data);
-        });
-
-        this.joe.socket.on("giveUp", (data) =>
-        {
-            this.overlord.socket.emit("giveUp", data);
-        });
-
-        for (var i = 0; i < this.playersArr.length; i++)
-        {
-            this.playersArr[i].socket.on("disconnect", (socket) =>
-            {
-                if (this.overlord.socket === socket)
-                {
-                    this.joe.emit("winMsg");
-                }
-                else
-                {
-                    this.overlord.emit("winMsg");
-                }
-            });
-        }
     }
 }
 
 var waitingForRoom = undefined;
+var room = undefined;
 
 socket.on("connection", (soc) =>
 {
@@ -130,7 +78,7 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            var room = new Room([newPlayer, waitingForRoom]);
+            room = new Room([newPlayer, waitingForRoom]);
             
             console.log("Player 2 has arrived");
 
@@ -144,4 +92,51 @@ socket.on("connection", (soc) =>
             waitingForRoom = undefined;
         }
     })
+
+    soc.on("matchOnGoing", () => //when match is on going
+    {
+        //---------- Player Overlord
+        room.overlord = room.playersArr[0];
+
+        //---------- Player Joe
+        room.joe = room.playersArr[1];
+
+        room.overlord.socket.on("oLTransformUpdate", (data) => //from sender
+        {
+            room.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
+            console.log("Hello");
+        });
+
+        room.overlord.socket.on("shoot", (data) => {
+            room.joe.socket.emit("shoot", data);
+        });
+
+        room.overlord.socket.on("giveUp", (data) => {
+            room.joe.socket.emit("giveUp", data);
+        });
+
+        room.joe.socket.on("joeTransformUpdate", (data) => {
+            room.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
+            console.log("Hello");
+        });
+
+        room.joe.socket.on("pickUp", (data) => {
+            room.overlord.socket.emit("pickUp", data);
+        });
+
+        room.joe.socket.on("giveUp", (data) => {
+            room.overlord.socket.emit("giveUp", data);
+        });
+
+        for (var i = 0; i < room.playersArr.length; i++) {
+            room.playersArr[i].socket.on("disconnect", (socket) => {
+                if (room.overlord.socket === socket) {
+                    room.joe.emit("winMsg");
+                }
+                else {
+                    room.overlord.emit("winMsg");
+                }
+            });
+        }
+    });
 });
