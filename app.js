@@ -77,6 +77,7 @@ class Room
         this.joe.socket.on("joeTransformUpdate", (data) =>
         {
             this.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
+            console.log(data);
         });
 
         this.joe.socket.on("pickUp", (data) =>
