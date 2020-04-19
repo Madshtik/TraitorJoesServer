@@ -99,11 +99,18 @@ socket.on("connection", (soc) =>
     {
         for (var i = 0; i < room.playersArr.length; i++) {
             room.playersArr[i].socket.on("position", (data) => {
+
+                console.log("Adele Song");
+
                 if (room.overlord.socket === socket) {
                     room.joe.emit("position", data);
+                    console.log("Adele 2");
+
                 }
                 else {
                     room.overlord.emit("position", data);
+                    console.log("Adele 3");
+
                 }
             });
         }
