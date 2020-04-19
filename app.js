@@ -85,11 +85,11 @@ socket.on("connection", (soc) =>
 
             console.log("Player 2 has arrived");
 
-            for (var i = 0; i < room.playersArr.length; i++) {
-                room.playersArr[i].socket.emit("startMatch");
-                room.playersArr[i].id = i;
+            for (var i = 0; i < roomArr[0].playersArr.length; i++) {
+                roomArr[0].playersArr[i].socket.emit("startMatch");
+                roomArr[0].playersArr[i].id = i;
 
-                console.log(room.playersArr[i].id);
+                console.log(roomArr[0].playersArr[i].id);
             }
             waitingForRoom = undefined;
 
@@ -107,7 +107,7 @@ socket.on("connection", (soc) =>
 
     if (matchStarted)
     {
-        for (var i = 0; i < room.playersArr.length; i++) {
+        for (var i = 0; i < roomArr[0].playersArr.length; i++) {
             roomArr[0].playersArr[i].socket.on("position", (data) => {
 
                 console.log("Adele Song");
