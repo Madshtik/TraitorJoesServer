@@ -1,6 +1,6 @@
 'use strict';
 
-var port = process.env.PORT || 1337;
+var port = /*process.env.PORT ||*/ 1337;
 
 const socket = require("socket.io")(port);
 
@@ -58,10 +58,12 @@ class Room
 var matchStarted = false;
 var waitingForRoom = undefined;
 var room = undefined;
+var pArr = [];
 
 socket.on("connection", (soc) =>
 {
     var newPlayer = new Player(soc);
+    pArr.push(newPlayer);
 
     console.log(newPlayer.socket.handshake.address);
 
@@ -95,6 +97,14 @@ socket.on("connection", (soc) =>
         }
     });
 
+    //if (pArr[1] === newPlayer) {
+    //    pArr[0].socket.on("transformUpdate", (data) => //from sender
+    //    {
+    //        pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
+    //        console.log(data);
+    //    });
+    //}
+
     if (matchStarted)
     {
         for (var i = 0; i < room.playersArr.length; i++) {
@@ -120,9 +130,9 @@ socket.on("connection", (soc) =>
         //---------- Player Joe
         room.joe = room.playersArr[1];
 
-        room.overlord.socket.on("oLTransformUpdate", (data) => //from sender
+        room.overlord.socket.on("transformUpdate", (data) => //from sender
         {
-            room.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
+            room.joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
             console.log("Hello");
         });
 
@@ -134,8 +144,8 @@ socket.on("connection", (soc) =>
             room.joe.socket.emit("giveUp", data);
         });
 
-        room.joe.socket.on("joeTransformUpdate", (data) => {
-            room.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
+        room.joe.socket.on("transformUpdate", (data) => {
+            room.overlord.socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
             console.log("Hello");
         });
 
@@ -150,10 +160,10 @@ socket.on("connection", (soc) =>
         for (var i = 0; i < room.playersArr.length; i++) {
             room.playersArr[i].socket.on("disconnect", (socket) => {
                 if (room.overlord.socket === socket) {
-                    room.joe.emit("winMsg");
+                    room.joe.socket.emit("winMsg");
                 }
                 else {
-                    room.overlord.emit("winMsg");
+                    room.overlord.socket.emit("winMsg");
                 }
             });
         }
