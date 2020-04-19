@@ -97,38 +97,37 @@ socket.on("connection", (soc) =>
 
     if (matchStarted)
     {
-        console.log(room);
         //---------- Player Overlord
-        room.overlord = room.playersArr[0];
+        //room.overlord = room.playersArr[0];
 
-        //---------- Player Joe
-        room.joe = room.playersArr[1];
+        ////---------- Player Joe
+        //room.joe = room.playersArr[1];
 
-        room.overlord.socket.on("oLTransformUpdate", (data) => //from sender
+        room.playersArr[0].socket.on("oLTransformUpdate", (data) => //from sender
         {
-            room.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
+            room.playersArr[1].socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
             console.log("Hello");
         });
 
-        room.overlord.socket.on("shoot", (data) => {
-            room.joe.socket.emit("shoot", data);
+        room.playersArr[0].socket.on("shoot", (data) => {
+            room.playersArr[1].socket.emit("shoot", data);
         });
 
-        room.overlord.socket.on("giveUp", (data) => {
-            room.joe.socket.emit("giveUp", data);
+        room.playersArr[0].socket.on("giveUp", (data) => {
+            room.playersArr[1].socket.emit("giveUp", data);
         });
 
-        room.joe.socket.on("joeTransformUpdate", (data) => {
-            room.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
+        room.playersArr[1].socket.on("joeTransformUpdate", (data) => {
+            room.playersArr[0].socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
             console.log("Hello");
         });
 
-        room.joe.socket.on("pickUp", (data) => {
-            room.overlord.socket.emit("pickUp", data);
+        room.playersArr[1].socket.on("pickUp", (data) => {
+            room.playersArr[0].socket.emit("pickUp", data);
         });
 
-        room.joe.socket.on("giveUp", (data) => {
-            room.overlord.socket.emit("giveUp", data);
+        room.playersArr[1].socket.on("giveUp", (data) => {
+            room.playersArr[0].socket.emit("giveUp", data);
         });
 
         for (var i = 0; i < room.playersArr.length; i++) {
