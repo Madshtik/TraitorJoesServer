@@ -120,10 +120,14 @@ socket.on("connection", (soc) =>
             //---------- Player Joe
             room.joe = room.playersArr[1];
 
+
             pArr[0].socket.on("transformUpdate", (data) => //from sender
             {
+                var player = {
+                    positionX: data.GetField("Player Position").GetField("x position")
+                };
                 pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-                console.log("Hello");
+                console.log(player);
             });
 
             room.overlord.socket.on("shoot", (data) => {
