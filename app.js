@@ -95,7 +95,7 @@ socket.on("connection", (soc) =>
 
     soc.on("matchOnGoing", () => //when match is on going
     {
-        console.log("Hello World of BS");
+        console.log(room);
         //---------- Player Overlord
         room.overlord = room.playersArr[0];
 
