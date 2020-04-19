@@ -58,7 +58,7 @@ class Room
 var matchStarted = false;
 var waitingForRoom = undefined;
 var room = undefined;
-var pArr = [];
+var roomArr = [];
 
 socket.on("connection", (soc) =>
 {
@@ -81,7 +81,7 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            room = new Room([newPlayer, waitingForRoom]);
+            roomArr.push(new Room([newPlayer, waitingForRoom]));
 
             console.log("Player 2 has arrived");
 
@@ -108,62 +108,62 @@ socket.on("connection", (soc) =>
     if (matchStarted)
     {
         for (var i = 0; i < room.playersArr.length; i++) {
-            room.playersArr[i].socket.on("position", (data) => {
+            roomArr[0].playersArr[i].socket.on("position", (data) => {
 
                 console.log("Adele Song");
 
-                if (room.overlord.socket === socket) {
-                    room.joe.emit("position", data);
+                if (roomArr[0].overlord.socket === socket) {
+                    roomArr[0].joe.emit("position", data);
                     console.log("Adele 2");
 
                 }
                 else {
-                    room.overlord.emit("position", data);
+                    roomArr[0].overlord.emit("position", data);
                     console.log("Adele 3");
 
                 }
             });
         }
         //---------- Player Overlord
-        room.overlord = room.playersArr[0];
+        roomArr[0].overlord = roomArr[0].playersArr[0];
 
         //---------- Player Joe
-        room.joe = room.playersArr[1];
+        roomArr[0].joe = roomArr[0].playersArr[1];
 
-        room.overlord.socket.on("transformUpdate", (data) => //from sender
+        roomArr[0].overlord.socket.on("transformUpdate", (data) => //from sender
         {
-            room.joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
+            roomArr[0].joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
             console.log("Hello");
         });
 
-        room.overlord.socket.on("shoot", (data) => {
-            room.joe.socket.emit("shoot", data);
+        roomArr[0].overlord.socket.on("shoot", (data) => {
+            roomArr[0].joe.socket.emit("shoot", data);
         });
 
-        room.overlord.socket.on("giveUp", (data) => {
-            room.joe.socket.emit("giveUp", data);
+        roomArr[0].overlord.socket.on("giveUp", (data) => {
+            roomArr[0].joe.socket.emit("giveUp", data);
         });
 
-        room.joe.socket.on("transformUpdate", (data) => {
-            room.overlord.socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
+        roomArr[0].joe.socket.on("transformUpdate", (data) => {
+            roomArr[0].overlord.socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
             console.log("Hello");
         });
 
-        room.joe.socket.on("pickUp", (data) => {
-            room.overlord.socket.emit("pickUp", data);
+        roomArr[0].joe.socket.on("pickUp", (data) => {
+            roomArr[0].overlord.socket.emit("pickUp", data);
         });
 
-        room.joe.socket.on("giveUp", (data) => {
-            room.overlord.socket.emit("giveUp", data);
+        roomArr[0].joe.socket.on("giveUp", (data) => {
+            roomArr[0].overlord.socket.emit("giveUp", data);
         });
 
-        for (var i = 0; i < room.playersArr.length; i++) {
-            room.playersArr[i].socket.on("disconnect", (socket) => {
-                if (room.overlord.socket === socket) {
-                    room.joe.socket.emit("winMsg");
+        for (var i = 0; i < roomArr[0].playersArr.length; i++) {
+            roomArr[0].playersArr[i].socket.on("disconnect", (socket) => {
+                if (roomArr[0].overlord.socket === socket) {
+                    roomArr[0].joe.socket.emit("winMsg");
                 }
                 else {
-                    room.overlord.socket.emit("winMsg");
+                    roomArr[0].overlord.socket.emit("winMsg");
                 }
             });
         }
