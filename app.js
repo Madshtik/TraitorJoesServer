@@ -106,6 +106,8 @@ socket.on("connection", (soc) =>
             //---------- Player Joe
             room.joe = room.playersArr[1];
 
+            console.log(room.joe);
+
             room.overlord.socket.on("transformUpdate", (data) => //from sender
             {
                 room.joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
