@@ -55,6 +55,7 @@ class Room
     }
 }
 
+var matchStarted = false;
 var waitingForRoom = undefined;
 var room = undefined;
 
@@ -79,21 +80,22 @@ socket.on("connection", (soc) =>
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
             room = new Room([newPlayer, waitingForRoom]);
-            
+
             console.log("Player 2 has arrived");
 
-            for (var i = 0; i < room.playersArr.length; i++)
-            {
+            for (var i = 0; i < room.playersArr.length; i++) {
                 room.playersArr[i].socket.emit("startMatch");
                 room.playersArr[i].id = i;
 
                 console.log(room.playersArr[i].id);
             }
             waitingForRoom = undefined;
-        }
-    })
 
-    soc.on("matchOnGoing", () => //while match is on going
+            matchStarted = true;
+        }
+    });
+
+    if (matchStarted)
     {
         console.log(room);
         //---------- Player Overlord
@@ -139,5 +141,5 @@ socket.on("connection", (soc) =>
                 }
             });
         }
-    });
+    }
 });
