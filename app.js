@@ -95,6 +95,69 @@ socket.on("connection", (soc) =>
 
             matchStarted = true;
         }
+
+        if (matchStarted) {
+            for (var i = 0; i < room.playersArr.length; i++) {
+                room.playersArr[i].socket.on("position", (data) => {
+
+                    console.log("Adele Song");
+
+                    if (room.overlord.socket === socket) {
+                        room.joe.emit("position", data);
+                        console.log("Adele 2");
+
+                    }
+                    else {
+                        room.overlord.emit("position", data);
+                        console.log("Adele 3");
+
+                    }
+                });
+            }
+            //---------- Player Overlord
+            room.overlord = room.playersArr[0];
+
+            //---------- Player Joe
+            room.joe = room.playersArr[1];
+
+            pArr[0].socket.on("transformUpdate", (data) => //from sender
+            {
+                pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
+                console.log("Hello");
+            });
+
+            room.overlord.socket.on("shoot", (data) => {
+                room.joe.socket.emit("shoot", data);
+            });
+
+            room.overlord.socket.on("giveUp", (data) => {
+                room.joe.socket.emit("giveUp", data);
+            });
+
+            pArr[1].socket.on("transformUpdate", (data) => {
+                pArr[0].socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
+                console.log("Hello");
+            });
+
+            room.joe.socket.on("pickUp", (data) => {
+                room.overlord.socket.emit("pickUp", data);
+            });
+
+            room.joe.socket.on("giveUp", (data) => {
+                room.overlord.socket.emit("giveUp", data);
+            });
+
+            for (var i = 0; i < room.playersArr.length; i++) {
+                room.playersArr[i].socket.on("disconnect", (socket) => {
+                    if (room.overlord.socket === socket) {
+                        room.joe.socket.emit("winMsg");
+                    }
+                    else {
+                        room.overlord.socket.emit("winMsg");
+                    }
+                });
+            }
+        }
     });
 
     //if (pArr[1] === newPlayer) {
@@ -104,68 +167,4 @@ socket.on("connection", (soc) =>
     //        console.log(data);
     //    });
     //}
-
-    if (matchStarted)
-    {
-        for (var i = 0; i < room.playersArr.length; i++) {
-            room.playersArr[i].socket.on("position", (data) => {
-
-                console.log("Adele Song");
-
-                if (room.overlord.socket === socket) {
-                    room.joe.emit("position", data);
-                    console.log("Adele 2");
-
-                }
-                else {
-                    room.overlord.emit("position", data);
-                    console.log("Adele 3");
-
-                }
-            });
-        }
-        //---------- Player Overlord
-        room.overlord = room.playersArr[0];
-
-        //---------- Player Joe
-        room.joe = room.playersArr[1];
-
-        pArr[0].socket.on("transformUpdate", (data) => //from sender
-        {
-            pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-            console.log("Hello");
-        });
-
-        room.overlord.socket.on("shoot", (data) => {
-            room.joe.socket.emit("shoot", data);
-        });
-
-        room.overlord.socket.on("giveUp", (data) => {
-            room.joe.socket.emit("giveUp", data);
-        });
-
-        pArr[1].socket.on("transformUpdate", (data) => {
-            pArr[0].socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
-            console.log("Hello");
-        });
-
-        room.joe.socket.on("pickUp", (data) => {
-            room.overlord.socket.emit("pickUp", data);
-        });
-
-        room.joe.socket.on("giveUp", (data) => {
-            room.overlord.socket.emit("giveUp", data);
-        });
-
-        for (var i = 0; i < room.playersArr.length; i++) {
-            room.playersArr[i].socket.on("disconnect", (socket) => {
-                if (room.overlord.socket === socket) {
-                    room.joe.socket.emit("winMsg");
-                }
-                else {
-                    room.overlord.socket.emit("winMsg");
-                }
-            });
-        }
-    }
 });
