@@ -93,7 +93,7 @@ socket.on("connection", (soc) =>
         }
     })
 
-    soc.on("matchOnGoing", () => //when match is on going
+    soc.on("matchOnGoing", () => //while match is on going
     {
         console.log(room);
         //---------- Player Overlord
