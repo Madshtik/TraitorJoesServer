@@ -96,59 +96,50 @@ socket.on("connection", (soc) =>
             matchStarted = true;
         }
 
-        if (matchStarted) {
-            for (var i = 0; i < room.playersArr.length; i++) {
-                room.playersArr[i].socket.on("position", (data) => {
-
-                    console.log("Adele Song");
-
-                    if (room.overlord.socket === socket) {
-                        room.joe.emit("position", data);
-                        console.log("Adele 2");
-
-                    }
-                    else {
-                        room.overlord.emit("position", data);
-                        console.log("Adele 3");
-
-                    }
-                });
-            }
+        if (matchStarted)
+        {
+            console.log("0");
+            
             //---------- Player Overlord
             room.overlord = room.playersArr[0];
 
             //---------- Player Joe
             room.joe = room.playersArr[1];
 
-            if (pArr[1] === newPlayer)
+            room.overlord.socket.on("transformUpdate", (data) => //from sender
             {
-                pArr[0].socket.on("transformUpdate", (data) => //from sender
-                {
-                    pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-                    console.log(data);
-                });
-                console.log("in");
-            }
-            room.overlord.socket.on("shoot", (data) => {
+                room.joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
+                console.log("1");
+            });
+
+            room.overlord.socket.on("shoot", (data) =>
+            {
                 room.joe.socket.emit("shoot", data);
+                console.log("2");
             });
 
-            room.overlord.socket.on("giveUp", (data) => {
+            room.overlord.socket.on("giveUp", (data) =>
+            {
                 room.joe.socket.emit("giveUp", data);
+                console.log("3");
             });
 
-            if (pArr[0] === newPlayer) {
-                pArr[1].socket.on("transformUpdate", (data) => {
-                    pArr[0].socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
-                    console.log("Hello");
-                });
-            }
-            room.joe.socket.on("pickUp", (data) => {
+            room.joe.socket.on("transformUpdate", (data) =>
+            {
+                room.overlord.socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
+                console.log("4");
+            });
+
+            room.joe.socket.on("pickUp", (data) =>
+            {
                 room.overlord.socket.emit("pickUp", data);
+                console.log("5");
             });
 
-            room.joe.socket.on("giveUp", (data) => {
+            room.joe.socket.on("giveUp", (data) =>
+            {
                 room.overlord.socket.emit("giveUp", data);
+                console.log("6");
             });
 
             for (var i = 0; i < room.playersArr.length; i++) {
