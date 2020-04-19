@@ -125,7 +125,7 @@ socket.on("connection", (soc) =>
                 pArr[0].socket.on("transformUpdate", (data) => //from sender
                 {
                     pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-                    console.log("Hello");
+                    console.log(data);
                 });
             }
             room.overlord.socket.on("shoot", (data) => {
