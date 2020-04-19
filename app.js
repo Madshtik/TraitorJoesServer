@@ -62,7 +62,7 @@ class Room
         this.overlord.socket.on("oLTransformUpdate", (data) => //from sender
         {
             this.joe.socket.emit("oLTransformUpdate", data); //to receiver - the Networked OL should receive this
-            console.log(data.GetField("x position"));
+            console.log("Hello");
         });
 
         this.overlord.socket.on("shoot", (data) =>
@@ -78,7 +78,7 @@ class Room
         this.joe.socket.on("joeTransformUpdate", (data) =>
         {
             this.overlord.socket.emit("joeTransformUpdate", data); //to receiver - the Networked Joe should receive this
-            console.log(data.GetField("x position"));
+            console.log("Hello");
         });
 
         this.joe.socket.on("pickUp", (data) =>
