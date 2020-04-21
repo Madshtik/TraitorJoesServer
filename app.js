@@ -9,7 +9,7 @@ console.log("Server Started");
 
 class Player
 {
-    //id;
+    id;
     //position;
     //rotation;
 
@@ -52,18 +52,66 @@ class Room
     constructor(players)
     {
         this.playersArr = players;
+
+        //---------- Player Overlord
+        this.overlord = this.playersArr[0];
+
+        //---------- Player Joe
+        this.joe = this.playersArr[1];
+
+        this.overlord.socket.on("transformUpdate", (data) =>
+        {
+            this.joe.socket.emit("transformUpdate", data);
+        });
+
+        this.overlord.socket.on("shoot", (data) =>
+        {
+            this.joe.socket.emit("shoot", data);
+        });
+
+        this.overlord.socket.on("giveUp", (data) =>
+        {
+            this.joe.socket.emit("giveUp", data);
+        });
+
+
+        this.joe.socket.on("transformUpdate", (data) =>
+        {
+            this.overlord.socket.emit("transformUpdate", data);            
+        });
+
+        this.joe.socket.on("pickUp", (data) => //sender
+        {
+            this.overlord.socket.emit("pickUp", data); //receiver
+        });
+
+        this.joe.socket.on("giveUp", (data) =>
+        {
+            this.overlord.socket.emit("giveUp", data);
+        });
+
+        for (var i = 0; i < this.playersArr.length; i++)
+        {
+            this.playersArr[i].socket.on("disconnect", (socket) =>
+            {
+                if (this.overlord.socket === socket)
+                {
+                    this.joe.emit("winMsg");
+                }
+                else
+                {
+                    this.overlord.emit("winMsg");
+                }
+            });
+        }
     }
 }
 
-var matchStarted = false;
 var waitingForRoom = undefined;
-var room = undefined;
-var pArr = [];
 
 socket.on("connection", (soc) =>
 {
     var newPlayer = new Player(soc);
-    pArr.push(newPlayer);
 
     console.log(newPlayer.socket.handshake.address);
 
@@ -81,87 +129,25 @@ socket.on("connection", (soc) =>
     {
         if (waitingForRoom !== newPlayer) //finds room created by host
         {
-            room = new Room([newPlayer, waitingForRoom]);
-
+            var room = new Room([newPlayer, waitingForRoom]);
+            
             console.log("Player 2 has arrived");
 
-            for (var i = 0; i < room.playersArr.length; i++) {
-                room.playersArr[i].socket.emit("startMatch");
+            var data;
+            var dataJSON;
+
+            for (var i = 0; i < room.playersArr.length; i++)
+            {
+                data = '{ "id": i }';
+                dataJSON = JSON.stringify(data);
+
+                room.playersArr[i].socket.emit("startMatch", { "id": dataJSON });
+                room.playersArr[i].socket.emit("matchFound");
                 room.playersArr[i].id = i;
 
                 console.log(room.playersArr[i].id);
             }
             waitingForRoom = undefined;
-
-            matchStarted = true;
         }
-
-        if (matchStarted)
-        {
-            console.log("0");
-            
-            //---------- Player Overlord
-            room.overlord = room.playersArr[0];
-
-            //---------- Player Joe
-            room.joe = room.playersArr[1];
-
-            console.log(room.joe);
-
-            room.overlord.socket.on("transformUpdate", (data) => //from sender
-            {
-                room.joe.socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-                console.log("1");
-            });
-
-            room.overlord.socket.on("shoot", (data) =>
-            {
-                room.joe.socket.emit("shoot", data);
-                console.log("2");
-            });
-
-            room.overlord.socket.on("giveUp", (data) =>
-            {
-                room.joe.socket.emit("giveUp", data);
-                console.log("3");
-            });
-
-            room.joe.socket.on("transformUpdate", (data) =>
-            {
-                room.overlord.socket.emit("transformUpdate", data); //to receiver - the Networked Joe should receive this
-                console.log("4");
-            });
-
-            room.joe.socket.on("pickUp", (data) =>
-            {
-                room.overlord.socket.emit("pickUp", data);
-                console.log("5");
-            });
-
-            room.joe.socket.on("giveUp", (data) =>
-            {
-                room.overlord.socket.emit("giveUp", data);
-                console.log("6");
-            });
-
-            for (var i = 0; i < room.playersArr.length; i++) {
-                room.playersArr[i].socket.on("disconnect", (socket) => {
-                    if (room.overlord.socket === socket) {
-                        room.joe.socket.emit("winMsg");
-                    }
-                    else {
-                        room.overlord.socket.emit("winMsg");
-                    }
-                });
-            }
-        }
-    });
-
-    //if (pArr[1] === newPlayer) {
-    //    pArr[0].socket.on("transformUpdate", (data) => //from sender
-    //    {
-    //        pArr[1].socket.emit("transformUpdate", data); //to receiver - the Networked OL should receive this
-    //        console.log(data);
-    //    });
-    //}
+    })
 });
