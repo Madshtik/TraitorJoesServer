@@ -58,12 +58,12 @@ class Room
 
         //---------- Player Joe
         this.joe = this.playersArr[1];
-
-        this.overlord.socket.on("transformUpdate", (data) =>
-        {
-            this.joe.socket.emit("transformUpdate", data);
-        });
-
+        for(let i =0;i<this.playerArr.length;i++){
+           this.playerArr[i].socket.on("transformUpdate", (data) =>
+            {
+            this.playerArrplayerArr[1-i].socket.emit("transformUpdate", data);            
+            });   
+        }
         this.overlord.socket.on("shoot", (data) =>
         {
             this.joe.socket.emit("shoot", data);
@@ -75,10 +75,7 @@ class Room
         });
 
 
-        this.joe.socket.on("transformUpdate", (data) =>
-        {
-            this.overlord.socket.emit("transformUpdate", data);            
-        });
+
 
         this.joe.socket.on("pickUp", (data) => //sender
         {
