@@ -7,8 +7,7 @@ const socket = require("socket.io")(port);
 console.log("Port Number:", port);
 console.log("Server Started");
 
-class Player
-{
+class Player {
     id;
     //position;
     //rotation;
@@ -21,14 +20,12 @@ class Player
     /**
      * @param {SocketIO.Socket} playerSocket this is the socket when a player joins
      */
-    constructor(playerSocket)
-    {
+    constructor(playerSocket) {
         this.socket = playerSocket;
     }
 }
 
-class Room
-{
+class Room {
     /**
      * @type {Player}  this is the player type
      */
@@ -49,8 +46,7 @@ class Room
      * 
      * @param {Player[]} players this is an array of players
      */
-    constructor(players)
-    {
+    constructor(players) {
         this.playersArr = players;
 
         //---------- Player Overlord
@@ -58,45 +54,34 @@ class Room
 
         //---------- Player Joe
         this.joe = this.playersArr[1];
-        for(let i =0;i<this.playerArr.length;i++){
-           this.playerArr[i].socket.on("transformUpdate", (data) =>
-            {
-            this.playerArrplayerArr[1-i].socket.emit("transformUpdate", data);            
-            });   
+        for (let i = 0; i < this.playersArr.length; i++) {
+            this.playersArr[i].socket.on("transformUpdate", (data) => {
+                this.playersArr[1 - i].socket.emit("transformUpdate", data);
+            });
         }
-        this.overlord.socket.on("shoot", (data) =>
-        {
+        this.overlord.socket.on("shoot", (data) => {
             this.joe.socket.emit("shoot", data);
         });
 
-        this.overlord.socket.on("giveUp", (data) =>
-        {
+        this.overlord.socket.on("giveUp", (data) => {
             this.joe.socket.emit("giveUp", data);
         });
-
-
-
 
         this.joe.socket.on("pickUp", (data) => //sender
         {
             this.overlord.socket.emit("pickUp", data); //receiver
         });
 
-        this.joe.socket.on("giveUp", (data) =>
-        {
+        this.joe.socket.on("giveUp", (data) => {
             this.overlord.socket.emit("giveUp", data);
         });
 
-        for (var i = 0; i < this.playersArr.length; i++)
-        {
-            this.playersArr[i].socket.on("disconnect", (socket) =>
-            {
-                if (this.overlord.socket === socket)
-                {
+        for (var i = 0; i < this.playersArr.length; i++) {
+            this.playersArr[i].socket.on("disconnect", (socket) => {
+                if (this.overlord.socket === socket) {
                     this.joe.emit("winMsg");
                 }
-                else
-                {
+                else {
                     this.overlord.emit("winMsg");
                 }
             });
@@ -106,45 +91,36 @@ class Room
 
 var waitingForRoom = undefined;
 
-socket.on("connection", (soc) =>
-{
+socket.on("connection", (soc) => {
     var newPlayer = new Player(soc);
 
     console.log(newPlayer.socket.handshake.address);
 
-    soc.on("createRoom", () => //Hosting
-    {
-        if (waitingForRoom === undefined) //creates room
-        {
-            waitingForRoom = newPlayer;
-
-            console.log("Waiting for player 2");
-        }
-    });
-
     soc.on("findRoom", () => //Joining
     {
-        if (waitingForRoom !== newPlayer) //finds room created by host
+        console.log("Hello");
+        if (waitingForRoom !== newPlayer && waitingForRoom !== undefined) //finds room created by host
         {
             var room = new Room([newPlayer, waitingForRoom]);
-            
+
             console.log("Player 2 has arrived");
 
             var data;
             var dataJSON;
 
-            for (var i = 0; i < room.playersArr.length; i++)
-            {
-                data = '{ "id": i }';
-                dataJSON = JSON.stringify(data);
-
-                room.playersArr[i].socket.emit("startMatch", { "id": dataJSON });
-                room.playersArr[i].socket.emit("matchFound");
+            for (var i = 0; i < room.playersArr.length; i++) {
+                room.playersArr[i].socket.emit("startMatch", { "id": i });
                 room.playersArr[i].id = i;
 
                 console.log(room.playersArr[i].id);
             }
             waitingForRoom = undefined;
+        }
+        else if (waitingForRoom === undefined) //creates room
+        {
+            waitingForRoom = newPlayer;
+
+            console.log("Waiting for player 2");
         }
     })
 });
