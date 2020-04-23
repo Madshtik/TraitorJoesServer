@@ -9,8 +9,6 @@ console.log("Server Started");
 
 class Player {
     id;
-    //position;
-    //rotation;
 
     /**
      * @type {SocketIO.Socket}  this is the socket given when a player joins
@@ -65,6 +63,10 @@ class Room {
 
         this.overlord.socket.on("giveUp", (data) => {
             this.joe.socket.emit("giveUp", data);
+        });
+
+        this.overlord.socket.on("shotHit", (data) => {
+            this.joe.socket.emit("shotHit", data);
         });
 
         this.joe.socket.on("pickUp", (data) => //sender
