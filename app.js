@@ -35,56 +35,55 @@ class Room {
     joe;
 
     /**
-     *
      * @type {Player[]} this is an array of players
      */
     playersArr = [];
 
     /**
-     * 
      * @param {Player[]} players this is an array of players
      */
+
     constructor(players) {
         this.playersArr = players;
 
-        //---------- Player Overlord
+        //Player Overlord
         this.overlord = this.playersArr[0];
 
-        //---------- Player Joe
+        //Player Joe
         this.joe = this.playersArr[1];
-        for (let i = 0; i < this.playersArr.length; i++) {
-            this.playersArr[i].socket.on("transformUpdate", (data) => {
-                this.playersArr[1 - i].socket.emit("transformUpdate", data);
-            });
-        }
+
         this.overlord.socket.on("shoot", (data) => {
             this.joe.socket.emit("shoot", data);
-        });
-
-        this.overlord.socket.on("giveUp", (data) => {
-            this.joe.socket.emit("giveUp", data);
         });
 
         this.overlord.socket.on("shotHit", (data) => {
             this.joe.socket.emit("shotHit", data);
         });
 
-        this.joe.socket.on("pickUp", (data) => //sender
-        {
+        //sender
+        this.joe.socket.on("pickUp", (data) => {
             this.overlord.socket.emit("pickUp", data); //receiver
         });
 
-        this.joe.socket.on("giveUp", (data) => {
-            this.overlord.socket.emit("giveUp", data);
-        });
+        for (let i = 0; i < this.playersArr.length; i++) {
+            this.playersArr[i].socket.on("giveUp", (data) => {
+                this.playersArr[1 - i].socket.emit("giveUp", data);
+            });
+        }
+
+        for (let i = 0; i < this.playersArr.length; i++) {
+            this.playersArr[i].socket.on("transformUpdate", (data) => {
+                this.playersArr[1 - i].socket.emit("transformUpdate", data);
+            });
+        }
 
         for (var i = 0; i < this.playersArr.length; i++) {
             this.playersArr[i].socket.on("disconnect", (socket) => {
                 if (this.overlord.socket === socket) {
-                    this.joe.emit("winMsg");
+                    this.joe.emit("disconMsg");
                 }
                 else {
-                    this.overlord.emit("winMsg");
+                    this.overlord.emit("disconMsg");
                 }
             });
         }
@@ -106,9 +105,6 @@ socket.on("connection", (soc) => {
             var room = new Room([newPlayer, waitingForRoom]);
 
             console.log("Player 2 has arrived");
-
-            var data;
-            var dataJSON;
 
             for (var i = 0; i < room.playersArr.length; i++) {
                 room.playersArr[i].socket.emit("startMatch", { "id": i });
