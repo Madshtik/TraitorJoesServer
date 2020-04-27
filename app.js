@@ -73,7 +73,7 @@ class Room {
             });
         }
 
-        for (var i = 0; i < this.playersArr.length; i++) { //do we really need this?
+        for (var i = 0; i < this.playersArr.length; i++) {
             this.playersArr[i].socket.on("disconnect", (socket) => {
                 if (this.overlord.socket === socket) {
                     this.joe.emit("disconMsg");
