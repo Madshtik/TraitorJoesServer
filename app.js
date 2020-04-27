@@ -52,10 +52,6 @@ class Room {
         //Player Joe
         this.joe = this.playersArr[1];
 
-        this.overlord.socket.on("shoot", (data) => {
-            this.joe.socket.emit("shoot", data);
-        });
-
         this.overlord.socket.on("shotHit", (data) => {
             this.joe.socket.emit("shotHit", data);
         });
