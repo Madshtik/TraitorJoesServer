@@ -54,6 +54,7 @@ class Room {
 
         this.overlord.socket.on("shotHit", (data) => {
             this.joe.socket.emit("shotHit", data);
+            console.log("Message Received");
         });
 
         //sender
