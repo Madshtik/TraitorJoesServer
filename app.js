@@ -56,7 +56,9 @@ class Room {
             this.joe.socket.emit("shotHit", data);
             console.log("Message Received");
         });
-
+        this.joe.socket.on("shotHit", (data) => {
+            console.log("Wrong Received");
+        });
         //sender
         this.joe.socket.on("pickUp", (data) => {
             this.overlord.socket.emit("pickUp", data); //receiver
@@ -77,10 +79,10 @@ class Room {
         for (var i = 0; i < this.playersArr.length; i++) {
             this.playersArr[i].socket.on("disconnect", (socket) => {
                 if (this.overlord.socket === socket) {
-                    this.joe.emit("disconMsg");
+                    this.joe.socket.emit("disconMsg");
                 }
                 else {
-                    this.overlord.emit("disconMsg");
+                    this.overlord.socket.emit("disconMsg");
                 }
             });
         }
