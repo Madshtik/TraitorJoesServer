@@ -1,6 +1,7 @@
 'use strict';
 
 var port = process.env.PORT || 1337;
+var waitingForRoom = undefined;
 
 const socket = require("socket.io")(port);
 
@@ -88,8 +89,6 @@ class Room {
         }
     }
 }
-
-var waitingForRoom = undefined;
 
 socket.on("connection", (soc) => {
     var newPlayer = new Player(soc);
