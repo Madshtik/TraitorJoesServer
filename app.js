@@ -71,8 +71,8 @@ class Room {
 
         this.joe.socket.on("joeInvisible", (data) => {
 
-            console.log("INVIS");
             this.overlord.socket.emit("joeInvisible", (data));
+            console.log("INVIS");
         });
 
         this.joe.socket.on("!joeInvisible", (data) => {
