@@ -55,11 +55,32 @@ class Room {
 
         this.overlord.socket.on("shotHit", (data) => {
             this.joe.socket.emit("shotHit", data);
-            console.log("Message Received");
         });
-        this.joe.socket.on("shotHit", (data) => {
-            console.log("Wrong Received");
+
+        this.overlord.socket.on("disorient", (data) => {
+            this.joe.socket.emit("disorient", data);
         });
+
+        this.overlord.socket.on("!disorient", (data) => {
+            this.joe.socket.emit("!disorient", data);
+        });
+
+        this.overlord.socket.on("destroyAI", (data) => {
+            this.joe.socket.emit("destroyAI", data);
+        });
+
+        this.joe.socket.on("joeInvisible", (data) => {
+            this.overlord.socket.emit("joeInvisible", (data));
+        });
+
+        this.joe.socket.on("!joeInvisible", (data) => {
+            this.overlord.socket.emit("!joeInvisible", (data));
+        });
+
+        this.joe.socket.on("wanderAI", (data) => {
+            this.overlord.socket.emit("wanderAI", (data));
+        });
+
         //sender
         this.joe.socket.on("pickUp", (data) => {
             this.overlord.socket.emit("pickUp", data); //receiver
