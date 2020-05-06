@@ -10,6 +10,8 @@
     "name": ""
   },
   "dependencies": {
+    "mongodb": "^3.5.7",
+    "mongoose": "^5.9.11",
     "socket.io": "2.3.0"
   }
 }
