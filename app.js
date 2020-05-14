@@ -120,7 +120,7 @@ socket.on("connection", (soc) => {
     soc.on("findRoom", () => //Joining
     {
         console.log("Hello");
-        if (waitingForRoom !== newPlayer && waitingForRoom !== undefined) //finds room created by host
+        if (waitingForRoom !== newPlayer && waitingForRoom !== undefined)
         {
             var room = new Room([newPlayer, waitingForRoom]);
 
@@ -134,7 +134,7 @@ socket.on("connection", (soc) => {
             }
             waitingForRoom = undefined;
         }
-        else if (waitingForRoom === undefined) //creates room
+        else if (waitingForRoom === undefined)
         {
             waitingForRoom = newPlayer;
 
